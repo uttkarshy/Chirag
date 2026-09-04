@@ -1,4 +1,4 @@
-from app.engine import analyze_intent, generate_questions
+from app.engine import analyze_intent, analyze_request, generate_questions
 from app.schema import AnalyzeRequest, ClarificationAnswer, InputSource
 
 
@@ -31,7 +31,7 @@ def test_clarification_answer_resolves_missing_output():
             )
         ],
     )
-    intent = __import__("app.engine", fromlist=["analyze_request"]).analyze_request(request)
+    intent = analyze_request(request)
     assert intent.output == "A concise investment analysis"
     assert intent.needs_clarification is False
     assert intent.missing_information == []
