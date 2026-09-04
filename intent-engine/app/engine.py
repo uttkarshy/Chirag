@@ -2,6 +2,11 @@ from .schema import AnalyzeRequest, InputSource, Intent
 
 QUESTION_BUDGET = 3
 
+CANONICAL_QUESTIONS = {
+    "desired output": "What would you like Chirag to produce as the final result?",
+    "clearer goal": "What would you like Chirag to accomplish?",
+}
+
 
 def _apply_clarification_answers(
     output: str | None,
@@ -12,16 +17,25 @@ def _apply_clarification_answers(
     remaining = list(missing_information)
     resolved_output = output
 
+    canonical_output = CANONICAL_QUESTIONS["desired output"].lower()
+    canonical_goal = CANONICAL_QUESTIONS["clearer goal"].lower()
+
     for answer in answers:
         text = answer.answer.strip()
         if not text:
             continue
 
-        question = answer.question.lower()
-        if "output" in question and "desired output" in remaining:
+        question = answer.question.strip().lower()
+        if (
+            (question == canonical_output or "produce as the final result" in question or "desired output" in question)
+            and "desired output" in remaining
+        ):
             resolved_output = text
             remaining.remove("desired output")
-        elif "accomplish" in question and "clearer goal" in remaining:
+        elif (
+            (question == canonical_goal or "accomplish" in question)
+            and "clearer goal" in remaining
+        ):
             remaining.remove("clearer goal")
 
     return resolved_output, remaining
@@ -87,10 +101,9 @@ def generate_questions_for_missing(missing_information: list[str]) -> list[str]:
     questions: list[str] = []
 
     for item in missing_information:
-        if item == "desired output":
-            questions.append("What would you like Chirag to produce as the final result?")
-        elif item == "clearer goal":
-            questions.append("What would you like Chirag to accomplish?")
+        question = CANONICAL_QUESTIONS.get(item)
+        if question:
+            questions.append(question)
 
         if len(questions) >= QUESTION_BUDGET:
             break
