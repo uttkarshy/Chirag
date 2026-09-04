@@ -5,12 +5,20 @@ services:
     ports:
       - "8001:8001"
 
+  planner:
+    build:
+      context: ./planner
+    ports:
+      - "8002:8002"
+
   gateway:
     build:
       context: ./gateway
     environment:
       CHIRAG_INTENT_ENGINE_URL: http://intent-engine:8001
+      CHIRAG_PLANNER_URL: http://planner:8002
     depends_on:
       - intent-engine
+      - planner
     ports:
       - "8000:8000"

@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 
 APP_VERSION = "0.2.0"
 INTENT_ENGINE_URL = os.getenv("CHIRAG_INTENT_ENGINE_URL", "http://intent-engine:8001")
+PLANNER_URL = os.getenv("CHIRAG_PLANNER_URL", "http://planner:8002")
 
 app = FastAPI(title="Chirag Gateway", version=APP_VERSION)
 
@@ -48,6 +49,20 @@ def _call_intent_engine(payload: dict) -> dict:
             return json.loads(response.read().decode("utf-8"))
     except (HTTPError, URLError, TimeoutError, ValueError) as exc:
         raise HTTPException(status_code=503, detail=f"Intent Engine unavailable: {exc}") from exc
+
+
+def _call_planner(payload: dict) -> dict:
+    request = Request(
+        f"{PLANNER_URL.rstrip('/')}/plan",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=15) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except (HTTPError, URLError, TimeoutError, ValueError) as exc:
+        raise HTTPException(status_code=503, detail=f"Planner unavailable: {exc}") from exc
 
 
 @app.get("/health")
@@ -91,8 +106,12 @@ def chat(request: ChatRequest) -> dict:
             "questions": intent_response["questions"],
         }
 
+    planner_response = _call_planner({"intent": intent})
+    plan = planner_response["plan"]
+
     return {
         "status": "accepted",
         "intent": intent,
-        "message": "Intent understood. Planner/model routing will execute this intent in a later milestone.",
+        "plan": plan,
+        "message": "Intent understood and planned. Planner/model routing will execute this plan in a later milestone.",
     }
