@@ -2,6 +2,13 @@
 
 from .analyzer import analyze_execution_plan
 from .executor import MockModelExecutor, ModelExecutor
+from .local_executor import (
+    DeterministicLocalBackend,
+    InProcessBackend,
+    LocalBackendResult,
+    LocalModelBackend,
+    LocalModelExecutor,
+)
 from .registry import ModelRegistry
 from .router import ModelRouter
 from .schema import (
@@ -44,6 +51,11 @@ __all__ = [
     "ModelRouter",
     "ModelExecutor",
     "MockModelExecutor",
+    "LocalModelExecutor",
+    "LocalModelBackend",
+    "InProcessBackend",
+    "DeterministicLocalBackend",
+    "LocalBackendResult",
     "RoutingError",
     "NoCompatibleModelError",
     "DuplicateModelError",
