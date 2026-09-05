@@ -1,4 +1,13 @@
-from .schema import ExecutionPlan, ModelRequirements, RegisteredModel
+from __future__ import annotations
+
+from .schema import (
+    ExecutionPlan,
+    ExecutionStatus,
+    ModelExecutionRequest,
+    ModelRequirements,
+    ModelResult,
+    RegisteredModel,
+)
 
 
 class RoutingError(Exception):
@@ -18,6 +27,11 @@ class DuplicateModelError(RoutingError):
 
 class ModelNotFoundError(RoutingError):
     """Raised when looking up or removing a model_id that is not registered."""
+    pass
+
+
+class ExecutionError(Exception):
+    """Base domain exception for model execution failures."""
     pass
 
 
@@ -58,3 +72,29 @@ def validate_registered_model(model: RegisteredModel) -> RegisteredModel:
     if model.maximum_context_tokens <= 0:
         raise ValueError("maximum_context_tokens must be positive.")
     return model
+
+
+def validate_execution_request(request: ModelExecutionRequest) -> ModelExecutionRequest:
+    """Validate that a ModelExecutionRequest satisfies contract invariants."""
+    if not request.model_id or not request.model_id.strip():
+        raise ValueError("model_id cannot be empty.")
+    if not request.input or not request.input.strip():
+        raise ValueError("input cannot be empty.")
+    if not request.expected_output or not request.expected_output.strip():
+        raise ValueError("expected_output cannot be empty.")
+    if not request.input_modalities:
+        raise ValueError("input_modalities cannot be empty.")
+    if not request.output_modalities:
+        raise ValueError("output_modalities cannot be empty.")
+    return request
+
+
+def validate_model_result(result: ModelResult) -> ModelResult:
+    """Validate that a ModelResult satisfies contract invariants."""
+    if not result.model_id or not result.model_id.strip():
+        raise ValueError("model_id cannot be empty.")
+    if result.status == ExecutionStatus.SUCCESS.value and result.output is None:
+        raise ValueError("Successful ModelResult must contain an output.")
+    if result.status == ExecutionStatus.FAILED.value and not result.error:
+        raise ValueError("Failed ModelResult must contain an error description.")
+    return result
