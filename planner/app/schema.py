@@ -55,6 +55,7 @@ class PlanStep(BaseModel):
     depends_on: list[str] = Field(default_factory=list, description="List of step IDs that must be completed prior to this step.")
     requirements: list[str] = Field(default_factory=list, description="Explicit requirements or constraints guiding this step.")
     expected_output: str = Field(..., description="Description of the artifact or intermediate result produced.")
+    metadata: dict[str, str] = Field(default_factory=dict, description="Provider-independent step metadata.")
 
 
 class ExecutionPlan(BaseModel):

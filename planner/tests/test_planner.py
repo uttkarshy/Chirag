@@ -196,3 +196,39 @@ def test_desired_output_mentioning_provider_or_model_is_accepted():
 
     assert plan.desired_output == "Comparative benchmark of GPT-4, Claude 3.5, and Llama 3"
     assert len(plan.steps) == 1
+
+
+def test_planner_preserves_image_source_metadata():
+    intent = Intent(
+        goal="Extract information from image",
+        output="Extracted text",
+        inputs=[InputSource(type="image", id="user_upload_123")],
+    )
+    plan = create_plan(intent)
+    inspect_step = plan.steps[0]
+    assert inspect_step.step_type == "inspect_source"
+    assert inspect_step.metadata.get("source_type") == "image"
+
+
+def test_planner_preserves_audio_source_metadata():
+    intent = Intent(
+        goal="Transcribe recording",
+        output="Transcript",
+        inputs=[InputSource(type="audio", id="voice_memo_456")],
+    )
+    plan = create_plan(intent)
+    inspect_step = plan.steps[0]
+    assert inspect_step.step_type == "inspect_source"
+    assert inspect_step.metadata.get("source_type") == "audio"
+
+
+def test_planner_preserves_video_source_metadata():
+    intent = Intent(
+        goal="Analyze security video",
+        output="Incident report",
+        inputs=[InputSource(type="video", id="camera_feed_789")],
+    )
+    plan = create_plan(intent)
+    inspect_step = plan.steps[0]
+    assert inspect_step.step_type == "inspect_source"
+    assert inspect_step.metadata.get("source_type") == "video"

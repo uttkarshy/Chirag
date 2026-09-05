@@ -5,10 +5,13 @@ from .validation import validate_execution_plan, validate_intent_for_planning
 INSPECTABLE_SOURCE_TYPES = {
     "file",
     "image",
+    "audio",
+    "video",
     "url",
     "repository",
     "connected_source",
 }
+
 
 
 def _generate_plan_id(
@@ -67,7 +70,9 @@ def create_plan(intent: Intent) -> ExecutionPlan:
             depends_on=[],
             requirements=[f"Role: {src.role}"] if src.role else [],
             expected_output=f"Extracted and validated information from {source_label}",
+            metadata={"source_type": src.type},
         )
+
         steps.append(step)
         inspection_step_ids.append(step_id)
         current_step_num += 1
