@@ -145,3 +145,121 @@ class ModelRequirements(BaseModel):
         if v is not None and v < 0:
             raise ValueError("minimum_context_tokens cannot be negative.")
         return v
+
+
+class RegisteredModel(BaseModel):
+    """Provider-independent profile of a registered model available for routing."""
+
+    # Disallow provider/model/gpu-specific fields structurally
+    model_config = ConfigDict(extra="forbid")
+
+    model_id: str = Field(..., description="Unique, stable model identifier.")
+    capabilities: list[str] = Field(..., description="Supported capabilities.")
+    input_modalities: list[str] = Field(..., description="Accepted input modalities.")
+    output_modalities: list[str] = Field(..., description="Produced output modalities.")
+    maximum_context_tokens: int = Field(..., gt=0, description="Maximum context window tokens supported.")
+    supports_structured_output: bool = Field(default=False, description="Whether structured output is supported.")
+    supports_streaming: bool = Field(default=False, description="Whether token/event streaming is supported.")
+    priority: int = Field(default=0, description="Selection priority score (higher values preferred).")
+    available: bool = Field(default=True, description="Whether the model is currently available for routing.")
+    metadata: dict[str, str] = Field(default_factory=dict, description="Provider-independent routing metadata.")
+
+    @field_validator("model_id")
+    @classmethod
+    def validate_model_id(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("model_id must be a non-empty string.")
+        return v.strip()
+
+    @field_validator("capabilities")
+    @classmethod
+    def validate_and_normalize_capabilities(cls, v: list[str]) -> list[str]:
+        if not v:
+            raise ValueError("Capabilities list cannot be empty.")
+
+        allowed_caps = {c.value for c in ModelCapability}
+        seen = set()
+        normalized = []
+
+        for item in v:
+            if not isinstance(item, str) or not item.strip():
+                raise ValueError("Capability must be a non-empty string.")
+            norm = item.strip().lower()
+            if norm not in allowed_caps:
+                raise ValueError(
+                    f"Unknown capability '{item}'. Allowed: {sorted(allowed_caps)}"
+                )
+            if norm in seen:
+                raise ValueError(f"Duplicate capability detected: '{norm}'")
+            seen.add(norm)
+            normalized.append(norm)
+
+        return sorted(normalized)
+
+    @field_validator("input_modalities")
+    @classmethod
+    def validate_and_normalize_input_modalities(cls, v: list[str]) -> list[str]:
+        if not v:
+            raise ValueError("Input modalities list cannot be empty.")
+
+        allowed_mods = {m.value for m in Modality}
+        seen = set()
+        normalized = []
+
+        for item in v:
+            if not isinstance(item, str) or not item.strip():
+                raise ValueError("Input modality must be a non-empty string.")
+            norm = item.strip().lower()
+            if norm not in allowed_mods:
+                raise ValueError(
+                    f"Invalid input modality '{item}'. Allowed: {sorted(allowed_mods)}"
+                )
+            if norm in seen:
+                raise ValueError(f"Duplicate input modality detected: '{norm}'")
+            seen.add(norm)
+            normalized.append(norm)
+
+        return sorted(normalized)
+
+    @field_validator("output_modalities")
+    @classmethod
+    def validate_and_normalize_output_modalities(cls, v: list[str]) -> list[str]:
+        if not v:
+            raise ValueError("Output modalities list cannot be empty.")
+
+        allowed_mods = {m.value for m in Modality}
+        seen = set()
+        normalized = []
+
+        for item in v:
+            if not isinstance(item, str) or not item.strip():
+                raise ValueError("Output modality must be a non-empty string.")
+            norm = item.strip().lower()
+            if norm not in allowed_mods:
+                raise ValueError(
+                    f"Invalid output modality '{item}'. Allowed: {sorted(allowed_mods)}"
+                )
+            if norm in seen:
+                raise ValueError(f"Duplicate output modality detected: '{norm}'")
+            seen.add(norm)
+            normalized.append(norm)
+
+        return sorted(normalized)
+
+    @field_validator("maximum_context_tokens")
+    @classmethod
+    def validate_context_tokens(cls, v: int) -> int:
+        if v <= 0:
+            raise ValueError("maximum_context_tokens must be positive.")
+        return v
+
+
+class ModelSelection(BaseModel):
+    """Result of a deterministic model routing selection."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    model_id: str = Field(..., description="Identifier of the selected model.")
+    matched_capabilities: list[str] = Field(..., description="Capabilities matched against requirements.")
+    reason: str = Field(..., description="Deterministic explanation for the selection.")
+    metadata: dict[str, str] = Field(default_factory=dict, description="Provider-independent routing metadata.")

@@ -1,8 +1,16 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schema import ExecutionPlan, ModelRequirements, PlanStep
-from app.validation import validate_execution_plan_for_routing, validate_model_requirements
+from app.schema import ExecutionPlan, ModelRequirements, PlanStep, RegisteredModel
+from app.validation import (
+    DuplicateModelError,
+    ModelNotFoundError,
+    NoCompatibleModelError,
+    RoutingError,
+    validate_execution_plan_for_routing,
+    validate_model_requirements,
+    validate_registered_model,
+)
 
 
 def test_invalid_capability_rejection():
@@ -86,3 +94,31 @@ def test_validate_model_requirements_helper():
     )
     validated = validate_model_requirements(req)
     assert validated == req
+
+
+def test_registered_model_zero_or_negative_context_rejection():
+    with pytest.raises(ValidationError):
+        RegisteredModel(
+            model_id="zero_context",
+            capabilities=["text_generation"],
+            input_modalities=["text"],
+            output_modalities=["text"],
+            maximum_context_tokens=0,
+        )
+
+
+def test_registered_model_empty_model_id_rejection():
+    with pytest.raises(ValidationError):
+        RegisteredModel(
+            model_id="",
+            capabilities=["text_generation"],
+            input_modalities=["text"],
+            output_modalities=["text"],
+            maximum_context_tokens=8192,
+        )
+
+
+def test_routing_exception_hierarchy():
+    assert issubclass(NoCompatibleModelError, RoutingError)
+    assert issubclass(DuplicateModelError, RoutingError)
+    assert issubclass(ModelNotFoundError, RoutingError)
