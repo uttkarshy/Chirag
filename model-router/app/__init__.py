@@ -1,8 +1,9 @@
-"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Evaluation Contract, Runner, and Laboratory (M3.9)."""
+"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Laboratory, and Evaluation Framework (M3.10)."""
 
 
 from .analyzer import analyze_execution_plan
 from .evaluation import (
+    DeterministicEvaluator,
     EvaluationCandidate,
     EvaluationDimension,
     EvaluationError,
@@ -13,6 +14,7 @@ from .evaluation import (
     EvaluationStatus,
     EvaluationSummary,
     EvaluationTask,
+    Evaluator,
     ExperimentRunResult,
     InvalidEvaluationCandidateError,
     InvalidEvaluationDimensionError,
@@ -23,6 +25,7 @@ from .evaluation import (
     InvalidEvaluationTaskError,
     InvalidExperimentRunResultError,
     ModelLaboratory,
+    UnsupportedEvaluationDimensionError,
     build_evaluation_summary,
     evaluation_result_from_model_result,
     rank_scores,
@@ -164,4 +167,7 @@ __all__ = [
     "InvalidExperimentRunResultError",
     "validate_evaluation_experiment",
     "validate_experiment_run_result",
+    "Evaluator",
+    "DeterministicEvaluator",
+    "UnsupportedEvaluationDimensionError",
 ]

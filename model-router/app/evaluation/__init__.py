@@ -1,5 +1,6 @@
 """Evaluation contract and ranking package for Chirag Model Laboratory."""
 
+from .evaluator import DeterministicEvaluator, Evaluator
 from .lab import (
     EvaluationExperiment,
     ExperimentRunResult,
@@ -33,6 +34,7 @@ from .validation import (
     InvalidEvaluationSummaryError,
     InvalidEvaluationTaskError,
     InvalidExperimentRunResultError,
+    UnsupportedEvaluationDimensionError,
     validate_evaluation_candidate,
     validate_evaluation_dimension,
     validate_evaluation_result,
@@ -74,4 +76,7 @@ __all__ = [
     "InvalidExperimentRunResultError",
     "validate_evaluation_experiment",
     "validate_experiment_run_result",
+    "Evaluator",
+    "DeterministicEvaluator",
+    "UnsupportedEvaluationDimensionError",
 ]

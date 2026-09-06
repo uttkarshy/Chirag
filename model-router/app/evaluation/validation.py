@@ -39,6 +39,11 @@ class InvalidEvaluationDimensionError(EvaluationError, ValueError):
     pass
 
 
+class UnsupportedEvaluationDimensionError(EvaluationError, ValueError):
+    """Raised when an evaluation dimension is requested that is not supported by the evaluator."""
+    pass
+
+
 class InvalidEvaluationScoreError(EvaluationError, ValueError):
     """Raised when an EvaluationScore violates contract invariants."""
     pass
