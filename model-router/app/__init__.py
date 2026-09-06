@@ -1,4 +1,4 @@
-"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Laboratory, Evaluator, and LLM Judge (M3.11)."""
+"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Laboratory, Evaluator, LLM Judge, and Prompt Strategy Optimization (M3.12)."""
 
 
 from .analyzer import analyze_execution_plan
@@ -47,6 +47,31 @@ from .evaluation import (
     validate_experiment_run_result,
 )
 from .executor import MockModelExecutor, ModelExecutor
+from .optimization import (
+    BUILTIN_STRATEGIES,
+    DefaultPromptStrategyGenerator,
+    InvalidPromptExperimentError,
+    InvalidPromptResultError,
+    InvalidPromptStrategyError,
+    InvalidPromptVariantError,
+    OptimizationError,
+    PromptOptimizationExperiment,
+    PromptOptimizationResult,
+    PromptOptimizationRunner,
+    PromptStrategy,
+    PromptStrategyAnalyzer,
+    PromptStrategyGenerator,
+    PromptVariant,
+    StrategyEvaluationScore,
+    StrategyObservation,
+    get_builtin_strategies,
+    get_builtin_strategy,
+    sanitize_text,
+    validate_prompt_experiment,
+    validate_prompt_result,
+    validate_prompt_strategy,
+    validate_prompt_variant,
+)
 from .local_executor import (
     DeterministicLocalBackend,
     InProcessBackend,
@@ -184,4 +209,26 @@ __all__ = [
     "JudgeExecutionError",
     "SUPPORTED_JUDGE_DIMENSIONS",
     "DEFAULT_JUDGE_RUBRIC",
+    "PromptStrategy",
+    "PromptVariant",
+    "StrategyObservation",
+    "StrategyEvaluationScore",
+    "PromptOptimizationExperiment",
+    "PromptOptimizationResult",
+    "BUILTIN_STRATEGIES",
+    "get_builtin_strategies",
+    "get_builtin_strategy",
+    "PromptStrategyGenerator",
+    "DefaultPromptStrategyGenerator",
+    "PromptStrategyAnalyzer",
+    "PromptOptimizationRunner",
+    "OptimizationError",
+    "InvalidPromptStrategyError",
+    "InvalidPromptVariantError",
+    "InvalidPromptExperimentError",
+    "InvalidPromptResultError",
+    "validate_prompt_strategy",
+    "validate_prompt_variant",
+    "validate_prompt_experiment",
+    "validate_prompt_result",
 ]

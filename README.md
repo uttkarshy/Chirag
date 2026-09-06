@@ -70,29 +70,27 @@ ModelProvider
 ModelResult
 ```
 
-### Evaluation Architecture Flow
+### Evaluation & Optimization Architecture Flow
 
-Candidate model execution and benchmark experiments follow a separate evaluation pipeline:
+Candidate model evaluation and prompt optimization follow layered pipelines:
 
 ```text
-EvaluationExperiment
+PromptOptimizationExperiment
  ↓
-ModelLaboratory
+PromptOptimizationRunner
  ↓
-EvaluationRunner
+PromptStrategyGenerator
  ↓
-ModelExecutor
+PromptVariant[]
  ↓
-EvaluationResult
+EvaluationRunner (reuses ModelExecutor)
  ↓
 Evaluator (DeterministicEvaluator / LLMJudgeEvaluator)
  ↓
-EvaluationScore[]
+PromptStrategyAnalyzer (Reverse-Prompting Foundation)
  ↓
-EvaluationSummary
+PromptOptimizationResult
 ```
-
-The prompt strategy optimizer layer is the next layer under development.
 
 ## Implemented Milestones
 
@@ -243,6 +241,23 @@ Implemented:
 - Tests use mocked/deterministic executors.
 - Real intelligent evaluation requires an actual configured judge model.
 
+### M3.12 — Prompt Strategy Optimization
+
+Implemented:
+- prompt strategy contract (`PromptStrategy`)
+- deterministic strategy generation (`PromptStrategyGenerator`, `DefaultPromptStrategyGenerator`)
+- prompt variants (`PromptVariant`)
+- controlled prompt experiments (`PromptOptimizationExperiment`)
+- strategy-level evaluation (`PromptOptimizationRunner`)
+- deterministic winner selection (score descending, strategy_id ascending)
+- reverse-prompting analysis foundation (`PromptStrategyAnalyzer`, `StrategyObservation`)
+
+*Clearly stated:*
+- M3.12 does NOT yet perform autonomous semantic prompt discovery or uncontrolled recursive prompt mutation.
+- Real prompt mutation and automated discovery remain future work.
+- Experiments enforce the Same Task Guarantee: all strategies evaluate the identical base task.
+- Tests use deterministic mock executors without external network calls.
+
 ## Current Capabilities
 
 Chirag currently has:
@@ -263,6 +278,11 @@ Chirag currently has:
 - intelligent evaluation framework (Evaluator)
 - deterministic output evaluator (DeterministicEvaluator)
 - semantic LLM judge evaluator (LLMJudgeEvaluator)
+- prompt strategy contracts (`PromptStrategy`, `PromptVariant`)
+- deterministic prompt strategy generator (`DefaultPromptStrategyGenerator`)
+- prompt optimization experiments (`PromptOptimizationExperiment`)
+- prompt optimization runner (`PromptOptimizationRunner`)
+- reverse-prompting analysis foundation (`PromptStrategyAnalyzer`)
 
 ## Provider Architecture
 
@@ -294,10 +314,12 @@ Separation of current and future evaluation components:
 - **Evaluator:** abstract quality evaluation contract.
 - **DeterministicEvaluator:** rule-based verification (exact match, contains all, length constraints, regex match).
 - **LLMJudgeEvaluator:** semantic quality judgment (correctness, relevance, completeness, instruction following) with blind evaluation.
+- **PromptOptimizationRunner:** experiments with multiple prompt strategies against a single task, scores each strategy, and selects the optimal prompt.
+- **PromptStrategyAnalyzer:** reverse-prompting foundation generating structured strategy observations from evaluation results.
 
 ### FUTURE
 
-- **Prompt Strategy Optimizer (M3.12):** mechanism for generating prompt variants, comparing results, and identifying optimal prompt strategies.
+- **Autonomous Prompt Discovery (M3.13+):** LLM-based recursive prompt hypothesis generation and automated mutation based on reverse-prompting telemetry.
 
 ## Compute Architecture (FUTURE)
 
@@ -355,18 +377,17 @@ Current test results:
 - `gateway`: 9 passed
 - `planner`: 28 passed
 - `intent-engine`: 16 passed
-- `model-router`: 268 passed
-- **Total:** 321 passed
+- `model-router`: 294 passed
+- **Total:** 347 passed
 
 ## Roadmap
 
 All roadmap items below represent future planned work unless explicitly documented as implemented above:
 
-### M3.12 — Prompt Strategy Optimization
-- experiment with prompt variants
-- compare results
-- identify better prompt strategies
-- reverse-prompting research
+### M3.13 — Autonomous Prompt Discovery & Mutation
+- LLM-driven prompt hypothesis generation
+- automated mutation from reverse-prompting observations
+- multi-round iterative refinement
 
 ### Future Providers
 - NVIDIA NIM
@@ -408,8 +429,8 @@ All roadmap items below represent future planned work unless explicitly document
 
 Current development status:
 
-M1–M3.11 implemented.
+M1–M3.12 implemented.
 
-M3.12+ under active development.
+M3.13+ under active development.
 
 Chirag is not production-ready.
