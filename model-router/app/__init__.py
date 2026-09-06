@@ -1,6 +1,33 @@
-"""Chirag Model Router - Capability Contract, Router, Executor, and Providers (M3.5)."""
+"""Chirag Model Router - Capability Contract, Router, Executor, Providers, and Evaluation Contract (M3.7)."""
+
 
 from .analyzer import analyze_execution_plan
+from .evaluation import (
+    EvaluationCandidate,
+    EvaluationDimension,
+    EvaluationError,
+    EvaluationResult,
+    EvaluationScore,
+    EvaluationStatus,
+    EvaluationSummary,
+    EvaluationTask,
+    InvalidEvaluationCandidateError,
+    InvalidEvaluationDimensionError,
+    InvalidEvaluationResultError,
+    InvalidEvaluationScoreError,
+    InvalidEvaluationSummaryError,
+    InvalidEvaluationTaskError,
+    build_evaluation_summary,
+    evaluation_result_from_model_result,
+    rank_scores,
+    select_winner,
+    validate_evaluation_candidate,
+    validate_evaluation_dimension,
+    validate_evaluation_result,
+    validate_evaluation_score,
+    validate_evaluation_summary,
+    validate_evaluation_task,
+)
 from .executor import MockModelExecutor, ModelExecutor
 from .local_executor import (
     DeterministicLocalBackend,
@@ -97,4 +124,28 @@ __all__ = [
     "validate_registered_model",
     "validate_execution_request",
     "validate_model_result",
+    "EvaluationStatus",
+    "EvaluationTask",
+    "EvaluationCandidate",
+    "EvaluationResult",
+    "EvaluationDimension",
+    "EvaluationScore",
+    "EvaluationSummary",
+    "EvaluationError",
+    "InvalidEvaluationTaskError",
+    "InvalidEvaluationCandidateError",
+    "InvalidEvaluationResultError",
+    "InvalidEvaluationDimensionError",
+    "InvalidEvaluationScoreError",
+    "InvalidEvaluationSummaryError",
+    "validate_evaluation_task",
+    "validate_evaluation_candidate",
+    "validate_evaluation_result",
+    "validate_evaluation_dimension",
+    "validate_evaluation_score",
+    "validate_evaluation_summary",
+    "rank_scores",
+    "select_winner",
+    "build_evaluation_summary",
+    "evaluation_result_from_model_result",
 ]
