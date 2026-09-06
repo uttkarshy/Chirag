@@ -32,6 +32,41 @@ class ExecutionStatus(str, Enum):
     FAILED = "failed"
 
 
+class ProviderStatus(str, Enum):
+    """Operational status of an inference provider adapter."""
+
+    HEALTHY = "healthy"
+    DEGRADED = "degraded"
+    UNHEALTHY = "unhealthy"
+
+
+class ProviderHealth(BaseModel):
+    """Operational health assessment of an inference provider."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    provider_id: str = Field(..., description="Identifier of the provider evaluated.")
+    status: str = Field(..., description="Health status: healthy, degraded, or unhealthy.")
+    latency_ms: float | None = Field(default=None, ge=0.0, description="Observed round-trip latency in milliseconds.")
+    message: str | None = Field(default=None, description="Diagnostic or descriptive operational status message.")
+    metadata: dict[str, str] = Field(default_factory=dict, description="Neutral operational metadata.")
+
+    @field_validator("provider_id")
+    @classmethod
+    def validate_provider_id(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("provider_id cannot be empty.")
+        return v.strip()
+
+    @field_validator("status")
+    @classmethod
+    def validate_status(cls, v: str) -> str:
+        allowed = {s.value for s in ProviderStatus}
+        if v.lower() not in allowed:
+            raise ValueError(f"Invalid provider status '{v}'. Allowed: {sorted(allowed)}")
+        return v.lower()
+
+
 class PlanStep(BaseModel):
     """Provider-independent step in an execution plan."""
 
@@ -169,6 +204,14 @@ class RegisteredModel(BaseModel):
     supports_streaming: bool = Field(default=False, description="Whether token/event streaming is supported.")
     priority: int = Field(default=0, description="Selection priority score (higher values preferred).")
     available: bool = Field(default=True, description="Whether the model is currently available for routing.")
+    provider_id: str | None = Field(
+        default=None,
+        description="Explicit provider identifier if this model profile is bound to a single provider.",
+    )
+    supported_providers: list[str] = Field(
+        default_factory=list,
+        description="List of provider identifiers capable of serving this model.",
+    )
     metadata: dict[str, str] = Field(default_factory=dict, description="Provider-independent routing metadata.")
 
     @field_validator("model_id")
@@ -259,6 +302,30 @@ class RegisteredModel(BaseModel):
         if v <= 0:
             raise ValueError("maximum_context_tokens must be positive.")
         return v
+
+    @field_validator("provider_id")
+    @classmethod
+    def validate_provider_id(cls, v: str | None) -> str | None:
+        if v is not None:
+            if not isinstance(v, str) or not v.strip():
+                raise ValueError("provider_id must be a non-empty string when provided.")
+            return v.strip()
+        return None
+
+    @field_validator("supported_providers")
+    @classmethod
+    def validate_supported_providers(cls, v: list[str]) -> list[str]:
+        seen = set()
+        normalized = []
+        for item in v:
+            if not isinstance(item, str) or not item.strip():
+                raise ValueError("provider identifier must be a non-empty string.")
+            norm = item.strip()
+            if norm in seen:
+                raise ValueError(f"Duplicate provider identifier detected: '{norm}'")
+            seen.add(norm)
+            normalized.append(norm)
+        return normalized
 
 
 class ModelSelection(BaseModel):

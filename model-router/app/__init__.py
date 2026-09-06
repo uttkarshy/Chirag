@@ -1,4 +1,4 @@
-"""Chirag Model Router - Capability Contract, Router, and Executor (M3.3)."""
+"""Chirag Model Router - Capability Contract, Router, Executor, and Providers (M3.5)."""
 
 from .analyzer import analyze_execution_plan
 from .executor import MockModelExecutor, ModelExecutor
@@ -9,7 +9,15 @@ from .local_executor import (
     LocalModelBackend,
     LocalModelExecutor,
 )
+from .providers import (
+    LocalModelProvider,
+    ModelProvider,
+    ProviderHealth,
+    ProviderRegistry,
+    ProviderStatus,
+)
 from .registry import ModelRegistry
+from .routed_executor import RoutedModelExecutor
 from .router import ModelRouter
 from .schema import (
     ExecutionPlan,
@@ -25,10 +33,15 @@ from .schema import (
 )
 from .validation import (
     DuplicateModelError,
+    DuplicateProviderError,
     ExecutionError,
     ModelNotFoundError,
     NoCompatibleModelError,
+    ProviderError,
+    ProviderExecutionError,
+    ProviderNotFoundError,
     RoutingError,
+    sanitize_error_message,
     validate_execution_plan_for_routing,
     validate_execution_request,
     validate_model_requirements,
@@ -40,6 +53,8 @@ __all__ = [
     "ModelCapability",
     "Modality",
     "ExecutionStatus",
+    "ProviderStatus",
+    "ProviderHealth",
     "ModelRequirements",
     "RegisteredModel",
     "ModelSelection",
@@ -56,11 +71,20 @@ __all__ = [
     "InProcessBackend",
     "DeterministicLocalBackend",
     "LocalBackendResult",
+    "ModelProvider",
+    "ProviderRegistry",
+    "LocalModelProvider",
+    "RoutedModelExecutor",
     "RoutingError",
     "NoCompatibleModelError",
     "DuplicateModelError",
     "ModelNotFoundError",
     "ExecutionError",
+    "ProviderError",
+    "DuplicateProviderError",
+    "ProviderNotFoundError",
+    "ProviderExecutionError",
+    "sanitize_error_message",
     "analyze_execution_plan",
     "validate_model_requirements",
     "validate_execution_plan_for_routing",

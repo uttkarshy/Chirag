@@ -62,3 +62,7 @@ class MockModelExecutor(ModelExecutor):
             error=None,
         )
         return validate_model_result(result)
+
+
+# Re-exported for convenience
+from .routed_executor import RoutedModelExecutor
