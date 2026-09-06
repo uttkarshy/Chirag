@@ -1,8 +1,10 @@
-"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Laboratory, and Evaluation Framework (M3.10)."""
+"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Laboratory, Evaluator, and LLM Judge (M3.11)."""
 
 
 from .analyzer import analyze_execution_plan
 from .evaluation import (
+    DEFAULT_JUDGE_RUBRIC,
+    SUPPORTED_JUDGE_DIMENSIONS,
     DeterministicEvaluator,
     EvaluationCandidate,
     EvaluationDimension,
@@ -24,6 +26,11 @@ from .evaluation import (
     InvalidEvaluationSummaryError,
     InvalidEvaluationTaskError,
     InvalidExperimentRunResultError,
+    InvalidJudgeResponseError,
+    JudgeEvaluationError,
+    JudgeExecutionError,
+    JudgePromptBuilder,
+    LLMJudgeEvaluator,
     ModelLaboratory,
     UnsupportedEvaluationDimensionError,
     build_evaluation_summary,
@@ -170,4 +177,11 @@ __all__ = [
     "Evaluator",
     "DeterministicEvaluator",
     "UnsupportedEvaluationDimensionError",
+    "LLMJudgeEvaluator",
+    "JudgePromptBuilder",
+    "JudgeEvaluationError",
+    "InvalidJudgeResponseError",
+    "JudgeExecutionError",
+    "SUPPORTED_JUDGE_DIMENSIONS",
+    "DEFAULT_JUDGE_RUBRIC",
 ]

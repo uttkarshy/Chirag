@@ -1,6 +1,9 @@
 """Evaluation contract and ranking package for Chirag Model Laboratory."""
 
 from .evaluator import DeterministicEvaluator, Evaluator
+from .judge import LLMJudgeEvaluator
+from .judge_prompt import JudgePromptBuilder, get_anonymous_label
+from .judge_schema import DEFAULT_JUDGE_RUBRIC, SUPPORTED_JUDGE_DIMENSIONS
 from .lab import (
     EvaluationExperiment,
     ExperimentRunResult,
@@ -34,6 +37,9 @@ from .validation import (
     InvalidEvaluationSummaryError,
     InvalidEvaluationTaskError,
     InvalidExperimentRunResultError,
+    InvalidJudgeResponseError,
+    JudgeEvaluationError,
+    JudgeExecutionError,
     UnsupportedEvaluationDimensionError,
     validate_evaluation_candidate,
     validate_evaluation_dimension,
@@ -79,4 +85,12 @@ __all__ = [
     "Evaluator",
     "DeterministicEvaluator",
     "UnsupportedEvaluationDimensionError",
+    "LLMJudgeEvaluator",
+    "JudgePromptBuilder",
+    "get_anonymous_label",
+    "JudgeEvaluationError",
+    "InvalidJudgeResponseError",
+    "JudgeExecutionError",
+    "SUPPORTED_JUDGE_DIMENSIONS",
+    "DEFAULT_JUDGE_RUBRIC",
 ]

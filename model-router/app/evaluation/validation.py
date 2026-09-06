@@ -64,6 +64,21 @@ class InvalidExperimentRunResultError(EvaluationError, ValueError):
     pass
 
 
+class JudgeEvaluationError(EvaluationError):
+    """Base domain exception for LLM Judge evaluation failures."""
+    pass
+
+
+class InvalidJudgeResponseError(JudgeEvaluationError, ValueError):
+    """Raised when the judge model returns an invalid, malformed, or out-of-bounds response."""
+    pass
+
+
+class JudgeExecutionError(JudgeEvaluationError):
+    """Raised when the judge model execution fails or errors out."""
+    pass
+
+
 def validate_evaluation_task(task: EvaluationTask) -> EvaluationTask:
     """Validate that an EvaluationTask adheres to contract invariants."""
     if not isinstance(task, EvaluationTask):

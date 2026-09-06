@@ -84,9 +84,15 @@ EvaluationRunner
 ModelExecutor
  ↓
 EvaluationResult
+ ↓
+Evaluator (DeterministicEvaluator / LLMJudgeEvaluator)
+ ↓
+EvaluationScore[]
+ ↓
+EvaluationSummary
 ```
 
-The intelligent evaluator layer is the next layer under development.
+The prompt strategy optimizer layer is the next layer under development.
 
 ## Implemented Milestones
 
@@ -202,7 +208,40 @@ Implemented:
 - repeated experiment execution
 - provider/model combination experiments
 
-*The laboratory currently executes and collects results. It does NOT yet perform intelligent quality judgment.*
+*The laboratory defines and executes controlled multi-candidate experiments.*
+
+### M3.10 — Intelligent Evaluation Framework
+
+Implemented:
+- Evaluator abstraction interface (`Evaluator.evaluate(task, results) -> EvaluationSummary`)
+- DeterministicEvaluator (exact match, contains all, length constraints, regex match)
+- strict scoring validation (EvaluationScore, dimension weights, overall score computation, deterministic ranking)
+- pluggable evaluator architecture
+
+*DeterministicEvaluator performs rule-based output verification.*
+
+### M3.11 — LLM Evaluation / Judge
+
+Implemented:
+- provider-neutral LLM Judge evaluator (`LLMJudgeEvaluator`)
+- semantic evaluation dimensions:
+  - correctness
+  - relevance
+  - completeness
+  - instruction following
+- deterministic blind candidate labeling (`Candidate A`, `Candidate B`, etc.)
+- structured judge-response validation (Pydantic schema, score range [0.0, 1.0], candidate ID mapping)
+- injected `ModelExecutor` architecture (judge model executes via existing model execution contract)
+- semantic score aggregation through existing evaluation primitives (`build_evaluation_summary`)
+- candidate failure isolation (failed candidates receive 0.0 scores with non-leaking failure rationale)
+- credential and secret redaction from judge prompts and rationales
+
+*Clearly stated:*
+- The LLM Judge does not perform candidate execution.
+- It does not select providers.
+- It does not select compute.
+- Tests use mocked/deterministic executors.
+- Real intelligent evaluation requires an actual configured judge model.
 
 ## Current Capabilities
 
@@ -221,6 +260,9 @@ Chirag currently has:
 - evaluation contracts
 - evaluation runner
 - multi-model evaluation laboratory
+- intelligent evaluation framework (Evaluator)
+- deterministic output evaluator (DeterministicEvaluator)
+- semantic LLM judge evaluator (LLMJudgeEvaluator)
 
 ## Provider Architecture
 
@@ -249,14 +291,13 @@ Separation of current and future evaluation components:
 
 - **EvaluationRunner:** executes candidates and collects normalized results.
 - **ModelLaboratory:** defines/runs controlled multi-model experiments.
+- **Evaluator:** abstract quality evaluation contract.
+- **DeterministicEvaluator:** rule-based verification (exact match, contains all, length constraints, regex match).
+- **LLMJudgeEvaluator:** semantic quality judgment (correctness, relevance, completeness, instruction following) with blind evaluation.
 
 ### FUTURE
 
-- **Evaluator:** judges output quality.
-- **LLM Judge:** future mechanism for semantic evaluation.
-- **Prompt Strategy Optimizer:** future mechanism for improving prompts based on experiment results.
-
-*(These future components are not yet implemented.)*
+- **Prompt Strategy Optimizer (M3.12):** mechanism for generating prompt variants, comparing results, and identifying optimal prompt strategies.
 
 ## Compute Architecture (FUTURE)
 
@@ -314,25 +355,12 @@ Current test results:
 - `gateway`: 9 passed
 - `planner`: 28 passed
 - `intent-engine`: 16 passed
-- `model-router`: 244 passed
-- **Total:** 297 passed
+- `model-router`: 268 passed
+- **Total:** 321 passed
 
 ## Roadmap
 
 All roadmap items below represent future planned work unless explicitly documented as implemented above:
-
-### M3.10 — Intelligent Evaluation Framework
-- Evaluator abstraction
-- deterministic evaluation
-- objective scoring
-- future LLM judge architecture
-
-### M3.11 — LLM Evaluation / Judge
-- semantic evaluation
-- correctness
-- relevance
-- completeness
-- instruction following
 
 ### M3.12 — Prompt Strategy Optimization
 - experiment with prompt variants
@@ -380,8 +408,8 @@ All roadmap items below represent future planned work unless explicitly document
 
 Current development status:
 
-M1–M3.9 implemented.
+M1–M3.11 implemented.
 
-M3.10+ under active development.
+M3.12+ under active development.
 
 Chirag is not production-ready.
