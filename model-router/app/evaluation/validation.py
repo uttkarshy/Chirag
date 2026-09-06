@@ -49,6 +49,16 @@ class InvalidEvaluationSummaryError(EvaluationError, ValueError):
     pass
 
 
+class InvalidEvaluationExperimentError(EvaluationError, ValueError):
+    """Raised when an EvaluationExperiment violates contract invariants."""
+    pass
+
+
+class InvalidExperimentRunResultError(EvaluationError, ValueError):
+    """Raised when an ExperimentRunResult violates contract invariants."""
+    pass
+
+
 def validate_evaluation_task(task: EvaluationTask) -> EvaluationTask:
     """Validate that an EvaluationTask adheres to contract invariants."""
     if not isinstance(task, EvaluationTask):

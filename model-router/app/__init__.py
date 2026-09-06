@@ -1,4 +1,4 @@
-"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Evaluation Contract, and Runner (M3.8)."""
+"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Evaluation Contract, Runner, and Laboratory (M3.9)."""
 
 
 from .analyzer import analyze_execution_plan
@@ -6,28 +6,35 @@ from .evaluation import (
     EvaluationCandidate,
     EvaluationDimension,
     EvaluationError,
+    EvaluationExperiment,
     EvaluationResult,
     EvaluationRunner,
     EvaluationScore,
     EvaluationStatus,
     EvaluationSummary,
     EvaluationTask,
+    ExperimentRunResult,
     InvalidEvaluationCandidateError,
     InvalidEvaluationDimensionError,
+    InvalidEvaluationExperimentError,
     InvalidEvaluationResultError,
     InvalidEvaluationScoreError,
     InvalidEvaluationSummaryError,
     InvalidEvaluationTaskError,
+    InvalidExperimentRunResultError,
+    ModelLaboratory,
     build_evaluation_summary,
     evaluation_result_from_model_result,
     rank_scores,
     select_winner,
     validate_evaluation_candidate,
     validate_evaluation_dimension,
+    validate_evaluation_experiment,
     validate_evaluation_result,
     validate_evaluation_score,
     validate_evaluation_summary,
     validate_evaluation_task,
+    validate_experiment_run_result,
 )
 from .executor import MockModelExecutor, ModelExecutor
 from .local_executor import (
@@ -150,4 +157,11 @@ __all__ = [
     "build_evaluation_summary",
     "evaluation_result_from_model_result",
     "EvaluationRunner",
+    "EvaluationExperiment",
+    "ExperimentRunResult",
+    "ModelLaboratory",
+    "InvalidEvaluationExperimentError",
+    "InvalidExperimentRunResultError",
+    "validate_evaluation_experiment",
+    "validate_experiment_run_result",
 ]

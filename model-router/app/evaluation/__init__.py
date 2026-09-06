@@ -1,5 +1,12 @@
 """Evaluation contract and ranking package for Chirag Model Laboratory."""
 
+from .lab import (
+    EvaluationExperiment,
+    ExperimentRunResult,
+    ModelLaboratory,
+    validate_evaluation_experiment,
+    validate_experiment_run_result,
+)
 from .ranking import (
     build_evaluation_summary,
     evaluation_result_from_model_result,
@@ -20,10 +27,12 @@ from .validation import (
     EvaluationError,
     InvalidEvaluationCandidateError,
     InvalidEvaluationDimensionError,
+    InvalidEvaluationExperimentError,
     InvalidEvaluationResultError,
     InvalidEvaluationScoreError,
     InvalidEvaluationSummaryError,
     InvalidEvaluationTaskError,
+    InvalidExperimentRunResultError,
     validate_evaluation_candidate,
     validate_evaluation_dimension,
     validate_evaluation_result,
@@ -58,4 +67,11 @@ __all__ = [
     "build_evaluation_summary",
     "evaluation_result_from_model_result",
     "EvaluationRunner",
+    "EvaluationExperiment",
+    "ExperimentRunResult",
+    "ModelLaboratory",
+    "InvalidEvaluationExperimentError",
+    "InvalidExperimentRunResultError",
+    "validate_evaluation_experiment",
+    "validate_experiment_run_result",
 ]
