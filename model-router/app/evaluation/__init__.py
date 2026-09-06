@@ -6,6 +6,7 @@ from .ranking import (
     rank_scores,
     select_winner,
 )
+from .runner import EvaluationRunner
 from .schema import (
     EvaluationCandidate,
     EvaluationDimension,
@@ -56,4 +57,5 @@ __all__ = [
     "select_winner",
     "build_evaluation_summary",
     "evaluation_result_from_model_result",
+    "EvaluationRunner",
 ]

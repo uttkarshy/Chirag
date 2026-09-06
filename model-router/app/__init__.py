@@ -1,4 +1,4 @@
-"""Chirag Model Router - Capability Contract, Router, Executor, Providers, and Evaluation Contract (M3.7)."""
+"""Chirag Model Router - Capability Contract, Router, Executor, Providers, Evaluation Contract, and Runner (M3.8)."""
 
 
 from .analyzer import analyze_execution_plan
@@ -7,6 +7,7 @@ from .evaluation import (
     EvaluationDimension,
     EvaluationError,
     EvaluationResult,
+    EvaluationRunner,
     EvaluationScore,
     EvaluationStatus,
     EvaluationSummary,
@@ -148,4 +149,5 @@ __all__ = [
     "select_winner",
     "build_evaluation_summary",
     "evaluation_result_from_model_result",
+    "EvaluationRunner",
 ]
